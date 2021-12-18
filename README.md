@@ -47,6 +47,13 @@ $ python listener.py
 **Erstellen sie ein oder mehrere python Programme mit denen es möglich ist, die Daten der oben genannten Topics so zu verarbeiten, dass über deren Verhalten ein weiterführender Eindruck vermittelt werden kann. Dabei steht die Visualisierung und die Beschreibung der Daten zB. in Plots im Vordergrund. Nutzen sie hierfür auch die Möglichkeit aus dem Code heraus Textdateien zu erzeugen. Die einzelne Umsetzung ist ihnen überlassen, richten sie sich nach der Verständlichkeit ihrer Aussage, die zum Beispiel mit einschließt wie viele Kurven der Husky zur Laufzeit gefahren war.**
 
 
+# Jupyter-Notebook
+
+```bash
+$ pip install --upgrade nbconvert
+$ pip install --upgrade "ipython[all]"
+$ pip install --upgrade jupyterhub
+```
 
 
 
