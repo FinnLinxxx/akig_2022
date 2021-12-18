@@ -53,6 +53,8 @@ $ python listener.py
 $ pip install --upgrade nbconvert
 $ pip install --upgrade "ipython[all]"
 $ pip install --upgrade jupyterhub
+$ pip install filterpy
+$ pip install sympy
 ```
 
 
