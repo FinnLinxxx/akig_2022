@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""
+Finn Linzer, TU Wien March 2022
+Subscribe to PointStamped from Tachymeter and Transform it to the appropiate Coordinatesysteme
+"""
+import sys
+import rospy
+from geometry_msgs.msg import PointStamped, TransformStamped
+from sensor_msgs.msg import Imu
+import tf2_ros
+
+seq_old = -1
+
+class Tachymeter(PointStamped):
+    """
+    inherits from rospy PointStamped Object
+    Can be Positions given by eg. Tachymeter, Odometry or GPS
+    additional Callback function for ros Subscriber
+    """
+
+    def callback(self, tachy_msg):
+        rospy.loginfo("Received position [x]%5.2f  [y]%5.2f  [z]%5.2f",
+                      tachy_msg.x, tachy_msg.y, tachy_msg.z)
+
+        self.set_x(tachy_msg.x)
+        self.set_y(tachy_msg.y)
+        self.set_z(tachy_msg.z)
+
+    def get_x(self):
+        return self.point.x
+
+    def get_y(self):
+        return self.point.y
+
+    def get_z(self):
+        return self.point.z
+
+    def set_x(self, value):
+        self.point.x = value
+
+    def set_y(self, value):
+        self.point.y = value
+
+    def set_z(self, value):
+        self.point.z = value
+
+
+def publish_transformed_tachy_points(pos, target_frame):
+    global seq_old
+    if(seq_old != pos.header.seq):
+        p = PointStamped()
+
+        p.header.stamp = pos.header.stamp
+        p.header.frame_id = "tachy_frame"
+
+        if pos.get_x() != 0:
+            t.transform.translation.x = pos.get_x()
+            t.transform.translation.y = pos.get_y()
+            t.transform.translation.z = pos.get_z()
+        else:
+            t.transform.translation.x = 0
+            t.transform.translation.y = 0
+            t.transform.translation.z = 0
+
+
+        rospy.loginfo("Transform sent!")
+        br.publish(t)
+
+
+if __name__ == '__main__':
+    try:
+        rospy.init_node('tf2_husky_broadcaster', anonymous=True)
+        pos = Tachymeter()
+
+        rospy.set_param('ptcl2_local_frame', 'prisma_frame')  # TODO: move to launch file
+
+        local_frame_ = rospy.get_param('ptcl2_local_frame')
+        tachy_sub = rospy.Subscriber('/tachy_points', PointStamped, pos.callback, local_frame_)
+        imu_sub = rospy.Subscriber('/imu/data', Imu, imu.callback)
+
+        while not rospy.is_shutdown():
+            publish_frame(pos, imu, local_frame_)
+
+            rospy.sleep(0.1)
+            # or: (execute when subscriber message comes in)
+            # rospy.spin()
+
+    except rospy.ROSInterruptException:
+        pass
